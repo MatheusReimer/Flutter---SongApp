@@ -23,7 +23,7 @@ class _SongDetailState extends State<SongDetail> {
               child: Image.asset(
                 "assets/placeholder.png",
                 height: 400,
-                fit: BoxFit.fitHeight,
+                fit: BoxFit.fitWidth,
                 color: Colors.white.withOpacity(0.2),
                 colorBlendMode: BlendMode.modulate,
               ),

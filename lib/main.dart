@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Flutter",
       theme: ThemeData(primarySwatch: Colors.pink),
-      home: const SongDetail(),
+      home: const Playlists(),
     );
   }
 }

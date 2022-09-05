@@ -72,10 +72,7 @@ class _CarrouselState extends State<Carrousel> {
           children: List.generate(
             1,
             (index) => Text(
-              widget.playlist[pageNo] +
-                  " ( " +
-                  widget.quantityMusic[pageNo].toString() +
-                  " )",
+              "a",
               style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'Glacial',

@@ -84,9 +84,6 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         padding: EdgeInsets.all(8),
                         child: GestureDetector(
-                          onTap: () {
-                            //Navigator.push()
-                          },
                           child: Text("Tap to Start",
                               style: TextStyle(
                                   color: Colors.white,
@@ -101,7 +98,15 @@ class _HomePageState extends State<HomePage> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       IconButton(
-                        onPressed: () => {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                                builder: (BuildContext context) {
+                              return Playlists();
+                            }),
+                          );
+                        },
                         icon: const Icon(Icons.play_circle),
                         color: AppColor.details,
                         iconSize: 40,
