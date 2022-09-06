@@ -49,28 +49,22 @@ class SpotifyApiServices {
       Playlists playlistToList = Playlists.fromJson(items[i]);
       listOfPlaylist.add(playlistToList);
     }
-    print(listOfPlaylist);
     return listOfPlaylist;
-//37i9dQZF1EQncLwOalG3K7  - pop mix
-//37i9dQZF1EQpj7X7UK8OOF - rock mix
-//37i9dQZF1EQpgT26jgbgRI - metal mix
-//37i9dQZF1EQmPV0vrce2QZ - country mix
-//37i9dQZF1EQnJyHBkXpASl - funk mix
   }
 
-  Future<Null> searchArtists(String token) async {
-    var artistID = await Dio()
-        .get("https://api.spotify.com/v1/search?query=Vintage&type=artist",
-            options: Options(headers: {
-              HttpHeaders.authorizationHeader: 'Bearer $token',
-              HttpHeaders.contentTypeHeader: 'application/json',
-            }));
-    List items = (artistID.data["artists"]["items"]);
+  Future<List<Artists>> searchArtists(String token, String artistName) async {
+    var playlists = await Dio().get('$_baseSearchUrl$artistName&type=artist',
+        options: Options(headers: {
+          HttpHeaders.authorizationHeader: 'Bearer $token',
+          HttpHeaders.contentTypeHeader: 'application/json',
+        }));
+    List items = (playlists.data["artists"]["items"]);
 
-    for (var x in items) {
-      print(x["name"]);
+    List<Artists> listOfArtists = [];
+    for (int i = 0; i < items.length; i++) {
+      Artists artistsToList = Artists.fromJson(items[i]);
+      listOfArtists.add(artistsToList);
     }
-
-    var test = 0;
+    return listOfArtists;
   }
 }

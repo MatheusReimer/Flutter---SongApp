@@ -1,13 +1,8 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 
 class Carrousel extends StatefulWidget {
   final List playlist;
-  final List quantityMusic;
-  const Carrousel(
-      {Key? key, required this.playlist, required this.quantityMusic})
-      : super(key: key);
+  const Carrousel({Key? key, required this.playlist}) : super(key: key);
 
   @override
   State<Carrousel> createState() => _CarrouselState();
@@ -15,7 +10,6 @@ class Carrousel extends StatefulWidget {
 
 class _CarrouselState extends State<Carrousel> {
   late final PageController pageController;
-
   int pageNo = 0;
 
   @override
@@ -35,7 +29,8 @@ class _CarrouselState extends State<Carrousel> {
     return Column(
       children: [
         SizedBox(
-          height: 250,
+          height: 350,
+          width: MediaQuery.of(context).size.width,
           child: PageView.builder(
             controller: pageController,
             onPageChanged: (index) {
@@ -44,22 +39,29 @@ class _CarrouselState extends State<Carrousel> {
             },
             itemBuilder: ((context, index) {
               return AnimatedBuilder(
-                animation: pageController,
-                builder: (ctx, child) {
-                  return child!;
-                },
-                child: Container(
-                  margin: const EdgeInsets.all(24.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24.0),
-                    color: Colors.white,
-                  ),
-                  child: Center(
-                    child: Image.asset('assets/vinil.png',
-                        width: 150, height: 150, fit: BoxFit.fill),
-                  ),
-                ),
-              );
+                  animation: pageController,
+                  builder: (ctx, child) {
+                    return child!;
+                  },
+                  child: Container(
+                      margin: EdgeInsets.only(top: 32),
+                      alignment: Alignment.centerLeft,
+                      child: CircleAvatar(
+                          radius: 155,
+                          backgroundColor: Colors.white,
+                          child: FittedBox(
+                              fit: BoxFit.contain,
+                              child: CircleAvatar(
+                                radius: 150,
+                                backgroundImage: widget.playlist.isNotEmpty
+                                    ? AssetImage(widget.playlist[index].image)
+                                    : AssetImage('assets/vinil.png')
+                                        as ImageProvider,
+                                onBackgroundImageError:
+                                    (exception, stackTrace) {
+                                  Image.asset('assets/vinil.png');
+                                },
+                              )))));
             }),
             itemCount: widget.playlist.length,
           ),
@@ -67,20 +69,26 @@ class _CarrouselState extends State<Carrousel> {
         const SizedBox(
           height: 20.0,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            1,
-            (index) => Text(
-              "a",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'Glacial',
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600),
-            ),
-          ),
-        )
+        widget.playlist.isNotEmpty
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: List.generate(
+                  1,
+                  (index) => SizedBox(
+                    height: 50,
+                    child: Text(
+                      widget.playlist[pageNo].mix,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Glacial',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
+              )
+            : Row()
       ],
     );
   }

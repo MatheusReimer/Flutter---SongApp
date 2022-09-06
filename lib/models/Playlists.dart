@@ -18,6 +18,10 @@ class NewsResponse {
 }
 
 class Artists {
+  static const String defaultImage = "";
+
+  static const String defaultGenre = "";
+
   Artists({
     this.name,
     this.image,
@@ -29,19 +33,26 @@ class Artists {
   String? name;
   String? image;
   String? genres;
-  String? followers;
+  int? followers;
   String? id;
 
-  Map<String, dynamic> toJsonAttr() => {
-        'name': name,
-        'image': image,
-        'genres': genres,
-        'followers': followers,
-        'id': id
-      };
+  factory Artists.fromJson(Map<String, dynamic> parsedJson) {
+    return Artists(
+        id: parsedJson['id'],
+        image: parsedJson['images'].length > 0
+            ? parsedJson['images'][0]['url']
+            : defaultImage,
+        name: parsedJson['name'],
+        genres: parsedJson['genres'].length > 0
+            ? parsedJson['genres'][0]
+            : defaultGenre,
+        followers: parsedJson['followers']['total']);
+  }
 }
 
 class Playlists {
+  static const String defaultImage = "";
+
   String? id;
   String? name;
   String? owner;
@@ -59,10 +70,13 @@ class Playlists {
   });
 
   factory Playlists.fromJson(Map<String, dynamic> parsedJson) {
+    print(parsedJson['images'][0]['url']);
     return Playlists(
         description: parsedJson['description'],
         id: parsedJson['id'],
-        image: parsedJson['images'][0]['url'],
+        image: parsedJson['images'].length > 0
+            ? parsedJson['images'][0]['url']
+            : defaultImage,
         name: parsedJson['name'],
         numberOfTracks: parsedJson['tracks']['total'],
         owner: parsedJson['owner']['display_name']);
