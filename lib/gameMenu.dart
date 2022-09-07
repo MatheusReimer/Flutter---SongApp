@@ -1,16 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:songapp/gameConfig.dart';
 import 'package:songapp/global/colors.dart';
+import 'package:songapp/song.dart';
 
 class GameMenu extends StatefulWidget {
-  const GameMenu({super.key});
+  final UserConfig config;
+  final String image;
+  final String playlist;
+  final int numberOfSongs;
+
+  const GameMenu(
+      {Key? key,
+      required this.config,
+      required this.image,
+      required this.playlist,
+      required this.numberOfSongs})
+      : super(key: key);
 
   @override
   State<GameMenu> createState() => _GameMenuState();
 }
 
 class _GameMenuState extends State<GameMenu> {
+  var maxLength = 15;
+  var textLength = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,8 +60,8 @@ class _GameMenuState extends State<GameMenu> {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Text("Link in Park Mix",
+            children: [
+              Text(widget.playlist,
                   style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'Glacial',
@@ -55,8 +71,8 @@ class _GameMenuState extends State<GameMenu> {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Text("20 Songs (Multiple Artists)",
+            children: [
+              Text("Songs: (${widget.numberOfSongs})",
                   style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'Glacial',
@@ -68,19 +84,21 @@ class _GameMenuState extends State<GameMenu> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 200,
-                height: 200,
-                padding: EdgeInsets.all(20),
-                margin: EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(
-                    color: AppColor.details,
-                    width: 10,
-                  ),
-                ),
-                child: Image.asset('assets/placeholder.png'),
-              )
+                  margin: EdgeInsets.only(top: 30, bottom: 15),
+                  height: 200,
+                  width: 200,
+                  child: CircleAvatar(
+                      radius: 160,
+                      backgroundColor: Color.fromARGB(255, 255, 255, 255),
+                      child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: CircleAvatar(
+                            backgroundImage: widget.image != ""
+                                ? NetworkImage(widget.image)
+                                : AssetImage('assets/logo.png')
+                                    as ImageProvider,
+                            radius: 95,
+                          ))))
             ],
           ),
           SizedBox(
@@ -88,11 +106,11 @@ class _GameMenuState extends State<GameMenu> {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: const [
               Text(
-                "Players",
+                'Players',
                 style: TextStyle(
-                    color: AppColor.details,
+                    color: Colors.white,
                     fontSize: 35,
                     fontFamily: "Glacial",
                     fontWeight: FontWeight.bold),
@@ -101,29 +119,83 @@ class _GameMenuState extends State<GameMenu> {
           ),
           Column(
             children: List.generate(
-                4,
+                widget.config.numberOfPlayers,
                 (index) => Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          padding: EdgeInsets.all(16),
-                          margin: EdgeInsets.only(top: 20),
-                          width: MediaQuery.of(context).size.width - 100,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(25)),
-                          child: Text(
-                            "Name",
-                            style: TextStyle(
-                                color: Color.fromARGB(125, 0, 0, 0),
-                                fontFamily: 'Glacial',
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        )
+                            margin: EdgeInsets.all(12),
+                            width: MediaQuery.of(context).size.width - 50,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                color: Colors.white),
+                            child: TextFormField(
+                              initialValue: 'Player $index',
+                              maxLength: maxLength,
+                              onChanged: (value) {
+                                setState(() {
+                                  textLength = value.length;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.all(15),
+                                suffixText:
+                                    '${textLength.toString()}/${maxLength.toString()}',
+                                counterText: "",
+                                labelText: 'Player name',
+                                labelStyle: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColor.details,
+                                ),
+                              ),
+                            ))
                       ],
                     )),
+          ),
+          SizedBox(
+            height: 40,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                  margin: EdgeInsets.all(18),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                            builder: (BuildContext context) {
+                          return SongDetail(
+                            image: widget.image,
+                          );
+                        }),
+                      );
+                    },
+                    child: Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                  ))
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                  child: Column(
+                children: [
+                  Divider(
+                    height: 10,
+                    thickness: 5,
+                    color: AppColor.details,
+                  )
+                ],
+              ))
+            ],
           )
         ],
       ),

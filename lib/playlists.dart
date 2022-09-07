@@ -2,9 +2,9 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:songapp/components/carrousel.dart';
+import 'package:songapp/gameConfig.dart';
 import 'package:songapp/global/colors.dart';
 import 'package:songapp/services/api.dart';
-
 import 'models/Playlists.dart';
 
 class Playlists extends StatefulWidget {
@@ -39,28 +39,38 @@ class _PlaylistsState extends State<Playlists> {
     Mock(mix: 'Justin Bieber', image: 'assets/justin.png')
   ];
   List quantityMusics = [10, 12, 14, 16, 18];
-  bool isLoaded = false;
+  bool isLoaded = true;
   List nonNullableStr = [""];
   List<Artists>? playlists = [];
   var apiListMixes = [];
   List apiListFeatured = [];
   var apiListArtists = [];
 
-  @override
-  void initState() {
-    super.initState();
-    //
-    getData();
-  }
-
-  getData() async {
+  getData(String artistName) async {
+    setState(() {
+      isLoaded = false;
+    });
     var token = (await SpotifyApiServices().fetchToken());
-
-    //add((await SpotifyApiServices().searchArtists(token, artistName)));
+    var response =
+        ((await SpotifyApiServices().fetchPlaylistsByName(token, artistName)));
 
     setState(() {
       isLoaded = true;
     });
+    pushRedirect(response);
+  }
+
+  pushRedirect(var response) {
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(builder: (BuildContext context) {
+        return GameConfig(
+            playListName: response[0].name,
+            imageUrl: response[0].image,
+            numberOfSongs: response[0].numberOfTracks,
+            owner: response[0].owner);
+      }),
+    );
   }
 
   @override
@@ -82,7 +92,7 @@ class _PlaylistsState extends State<Playlists> {
                         ],
                       ),
                       GestureDetector(
-                        onTap: () => {},
+                        onTap: () => {print("digitar...")},
                         child: Container(
                           padding: EdgeInsets.only(top: 20, left: 40),
                           child: Text(
@@ -144,36 +154,39 @@ class _PlaylistsState extends State<Playlists> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: 5,
                       itemBuilder: (context, index) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width - 36,
-                          height: 50,
-                          margin: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(2),
-                              color: Color.fromARGB(24, 255, 255, 255)),
-                          child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Image.asset(
-                                  predefinedListMixes[index].image,
-                                  width: 50,
-                                  height: 50,
-                                  fit: BoxFit.fill,
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  predefinedListMixes[index].mix,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: 'Glacial',
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ]),
-                        );
+                        return GestureDetector(
+                            onTap: () =>
+                                {getData(predefinedListMixes[index].mix)},
+                            child: Container(
+                              width: MediaQuery.of(context).size.width - 36,
+                              height: 50,
+                              margin: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(2),
+                                  color: Color.fromARGB(24, 255, 255, 255)),
+                              child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Image.asset(
+                                      predefinedListMixes[index].image,
+                                      width: 50,
+                                      height: 50,
+                                      fit: BoxFit.fill,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      predefinedListMixes[index].mix,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'Glacial',
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ]),
+                            ));
                       },
                     ),
                   ),

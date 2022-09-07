@@ -5,7 +5,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'global/colors.dart';
 
 class SongDetail extends StatefulWidget {
-  const SongDetail({super.key});
+  final String image;
+  const SongDetail({Key? key, required this.image}) : super(key: key);
 
   @override
   State<SongDetail> createState() => _SongDetailState();
@@ -18,33 +19,43 @@ class _SongDetailState extends State<SongDetail> {
       backgroundColor: Colors.black,
       body: Column(children: [
         Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(
-              child: Image.asset(
-                "assets/placeholder.png",
-                height: 400,
-                fit: BoxFit.fitWidth,
-                color: Colors.white.withOpacity(0.2),
-                colorBlendMode: BlendMode.modulate,
-              ),
-            ),
+            Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.only(top: 30, bottom: 15),
+                height: 425,
+                width: MediaQuery.of(context).size.width,
+                child: Stack(children: [
+                  Container(
+                    alignment: Alignment.center,
+                    child: Image.asset('assets/wave.png',
+                        height: 1000, width: MediaQuery.of(context).size.width),
+                  ),
+                  Container(
+                      alignment: Alignment.center,
+                      child: CircleAvatar(
+                          radius: 140,
+                          backgroundColor: Color.fromARGB(255, 255, 196, 0),
+                          child: FittedBox(
+                              fit: BoxFit.contain,
+                              child: CircleAvatar(
+                                backgroundImage: widget.image != ""
+                                    ? NetworkImage(widget.image)
+                                    : AssetImage('assets/logo.png')
+                                        as ImageProvider,
+                                radius: 130,
+                              )))),
+                ]))
           ],
-        ),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          color: AppColor.details,
-          height: 5,
-        ),
-        SizedBox(
-          height: 30,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: const [
             Text(
               "PLAYER 1",
               style: TextStyle(
-                  color: AppColor.details,
+                  color: Color.fromARGB(255, 255, 196, 0),
                   fontFamily: "Glacial",
                   fontSize: 35,
                   fontWeight: FontWeight.bold),
@@ -65,7 +76,20 @@ class _SongDetailState extends State<SongDetail> {
           ],
         ),
         SizedBox(
-          height: 30,
+          height: 10,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: const [
+            Icon(
+              Icons.play_circle,
+              color: Colors.white,
+              size: 120,
+            )
+          ],
+        ),
+        SizedBox(
+          height: 10,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -88,31 +112,20 @@ class _SongDetailState extends State<SongDetail> {
             )
           ],
         ),
-        SizedBox(
-          height: 30,
-        ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: const [
-            Icon(
-              Icons.play_circle,
-              color: Colors.white,
-              size: 120,
-            )
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Expanded(
-              child: Image.asset(
-                'assets/wave.png',
-                alignment: Alignment.center,
-                width: MediaQuery.of(context).size.width,
-              ),
-            )
+                child: Column(
+              children: [
+                Divider(
+                  height: 10,
+                  thickness: 5,
+                  color: AppColor.details,
+                )
+              ],
+            ))
           ],
-        ),
+        )
       ]),
     );
   }

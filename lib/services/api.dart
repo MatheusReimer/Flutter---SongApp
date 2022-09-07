@@ -36,7 +36,7 @@ class SpotifyApiServices {
   }
 
   Future<List<Playlists>> fetchPlaylistsByName(
-      String playlistId, String token) async {
+      String token, String playlistId) async {
     var playlists = await Dio().get('$_baseSearchUrl$playlistId&type=playlist',
         options: Options(headers: {
           HttpHeaders.authorizationHeader: 'Bearer $token',
