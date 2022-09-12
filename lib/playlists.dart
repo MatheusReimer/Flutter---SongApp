@@ -1,20 +1,60 @@
-import 'dart:ffi';
-
+import 'dart:async';
 import 'package:flutter/material.dart';
+//import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:songapp/components/carrousel.dart';
 import 'package:songapp/gameConfig.dart';
 import 'package:songapp/global/colors.dart';
+import 'package:songapp/models/Auth.dart';
 import 'package:songapp/services/api.dart';
+import 'models/AcessToken.dart';
 import 'models/Playlists.dart';
+import 'package:uni_links/uni_links.dart';
+
+TokenModel code = TokenModel();
+
+handleServices() async {
+  SpotifyApiServices().launchURLAuth();
+}
+
+handleServicesAfterRedirect(TokenModel code) async {
+  SpotifyApiServices().changeCodeForToken(code);
+}
 
 class Playlists extends StatefulWidget {
-  const Playlists({super.key});
+  const Playlists({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<Playlists> createState() => _PlaylistsState();
 }
 
 class _PlaylistsState extends State<Playlists> {
+  StreamSubscription? _sub;
+  Future<void> initUniLinks() async {
+    // ... check initialLink
+
+    // Attach a listener to the stream
+    _sub = linkStream.listen((String? link) async {
+      if (link != null) {
+        print('listener');
+        var uri = Uri.parse(link);
+        if (uri.queryParameters['code'] != null) {
+          print(uri.queryParameters['code'].toString());
+          code.code = uri.queryParameters['code'];
+          AccessToken tokenObj =
+              await SpotifyApiServices().changeCodeForToken(code);
+          SpotifyApiServices().playerDevices(tokenObj.accessToken);
+        }
+      }
+      // Parse the link and warn the user, if it is not correct
+    }, onError: (err) {
+      // Handle exception by warning the user their action did not succeed
+    });
+
+    // NOTE: Don't forget to call _sub.cancel() in dispose()
+  }
+
   List<Mock> predefinedListMixes = [
     Mock(mix: 'Metal Mix', image: 'assets/metal.png'),
     Mock(mix: 'Pop Mix', image: 'assets/pop.png'),
@@ -41,16 +81,17 @@ class _PlaylistsState extends State<Playlists> {
   List quantityMusics = [10, 12, 14, 16, 18];
   bool isLoaded = true;
   List nonNullableStr = [""];
-  List<Artists>? playlists = [];
+  List<ArtistsMyModel>? playlists = [];
   var apiListMixes = [];
   List apiListFeatured = [];
   var apiListArtists = [];
+  late String authToken;
 
   getData(String artistName) async {
     setState(() {
       isLoaded = false;
     });
-    var token = (await SpotifyApiServices().fetchToken());
+    String token = await SpotifyApiServices().getUserToken();
     var response =
         ((await SpotifyApiServices().fetchPlaylistsByName(token, artistName)));
 
@@ -71,6 +112,13 @@ class _PlaylistsState extends State<Playlists> {
             owner: response[0].owner);
       }),
     );
+  }
+
+  @override
+  initState() {
+    super.initState();
+
+    initUniLinks();
   }
 
   @override
@@ -109,26 +157,34 @@ class _PlaylistsState extends State<Playlists> {
                     ],
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width / 1.3,
-                    height: 50,
-                    decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 255, 255, 255),
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: const [
-                          Text(
-                            "Song, Artist, Album, Genres,Users, Etc",
-                            style: TextStyle(
+                      width: MediaQuery.of(context).size.width / 1.3,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 255, 255, 255),
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      child: GestureDetector(
+                        onTap: () async {
+                          if (code.code == null) {
+                            handleServices();
+                          } else {
+                            SpotifyApiServices().changeCodeForToken(code);
+                          }
+                        },
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: const [
+                              Text(
+                                "Song, Artist, Album, Genres,Users, Etc",
+                                style: TextStyle(
+                                    color: Color.fromARGB(134, 0, 0, 0),
+                                    fontFamily: "Glacial"),
+                              ),
+                              Icon(
+                                Icons.search,
                                 color: Color.fromARGB(134, 0, 0, 0),
-                                fontFamily: "Glacial"),
-                          ),
-                          Icon(
-                            Icons.search,
-                            color: Color.fromARGB(134, 0, 0, 0),
-                          )
-                        ]),
-                  ),
+                              )
+                            ]),
+                      )),
                   SizedBox(
                     height: 50,
                   ),

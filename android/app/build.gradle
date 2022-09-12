@@ -26,6 +26,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
+
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -51,6 +52,8 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        minSdkVersion 18
+        compileSdkVersion 33
     }
 
     buildTypes {
@@ -60,12 +63,14 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
 }
 
 flutter {
     source '../..'
 }
-
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+repositories {
+    flatDir {
+        dirs 'libs/aars'
+    }
 }

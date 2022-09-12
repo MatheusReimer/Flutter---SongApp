@@ -48,13 +48,13 @@ class GameConfig extends StatefulWidget {
   final int numberOfSongs;
   final String owner;
 
-  const GameConfig(
-      {Key? key,
-      required this.imageUrl,
-      required this.numberOfSongs,
-      required this.playListName,
-      required this.owner})
-      : super(key: key);
+  const GameConfig({
+    Key? key,
+    required this.imageUrl,
+    required this.numberOfSongs,
+    required this.playListName,
+    required this.owner,
+  }) : super(key: key);
 
   @override
   State<GameConfig> createState() => _GameConfigState();

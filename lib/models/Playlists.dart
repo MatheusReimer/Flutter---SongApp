@@ -9,7 +9,7 @@ class NewsResponse {
 
   String status;
   int totalResults;
-  List<Artists> artists;
+  List<ArtistsMyModel> artists;
 
   factory NewsResponse.fromJson(Map<String, dynamic> json) => NewsResponse(
       status: json["status"],
@@ -17,12 +17,12 @@ class NewsResponse {
       artists: json["artists"]);
 }
 
-class Artists {
+class ArtistsMyModel {
   static const String defaultImage = "";
 
   static const String defaultGenre = "";
 
-  Artists({
+  ArtistsMyModel({
     this.name,
     this.image,
     this.genres,
@@ -36,8 +36,8 @@ class Artists {
   int? followers;
   String? id;
 
-  factory Artists.fromJson(Map<String, dynamic> parsedJson) {
-    return Artists(
+  factory ArtistsMyModel.fromJson(Map<String, dynamic> parsedJson) {
+    return ArtistsMyModel(
         id: parsedJson['id'],
         image: parsedJson['images'].length > 0
             ? parsedJson['images'][0]['url']
@@ -50,7 +50,7 @@ class Artists {
   }
 }
 
-class Playlists {
+class PlaylistsModel {
   static const String defaultImage = "";
 
   String? id;
@@ -59,19 +59,20 @@ class Playlists {
   String? image;
   String? description;
   int? numberOfTracks;
+  bool? error;
 
-  Playlists({
-    this.id,
-    this.name,
-    this.owner,
-    this.image,
-    this.description,
-    this.numberOfTracks,
-  });
+  PlaylistsModel(
+      {this.id,
+      this.name,
+      this.owner,
+      this.image,
+      this.description,
+      this.numberOfTracks,
+      this.error});
 
-  factory Playlists.fromJson(Map<String, dynamic> parsedJson) {
+  factory PlaylistsModel.fromJson(Map<String, dynamic> parsedJson) {
     print(parsedJson['images'][0]['url']);
-    return Playlists(
+    return PlaylistsModel(
         description: parsedJson['description'],
         id: parsedJson['id'],
         image: parsedJson['images'].length > 0

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-
-import 'global/colors.dart';
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:songapp/global/colors.dart';
 
 class SongDetail extends StatefulWidget {
   final String image;
@@ -29,103 +27,92 @@ class _SongDetailState extends State<SongDetail> {
                 child: Stack(children: [
                   Container(
                     alignment: Alignment.center,
-                    child: Image.asset('assets/wave.png',
-                        height: 1000, width: MediaQuery.of(context).size.width),
+                    child: Image.network(widget.image),
                   ),
-                  Container(
-                      alignment: Alignment.center,
-                      child: CircleAvatar(
-                          radius: 140,
-                          backgroundColor: Color.fromARGB(255, 255, 196, 0),
-                          child: FittedBox(
-                              fit: BoxFit.contain,
-                              child: CircleAvatar(
-                                backgroundImage: widget.image != ""
-                                    ? NetworkImage(widget.image)
-                                    : AssetImage('assets/logo.png')
-                                        as ImageProvider,
-                                radius: 130,
-                              )))),
                 ]))
           ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Text(
-              "PLAYER 1",
+              "Matheus(1)",
               style: TextStyle(
-                  color: Color.fromARGB(255, 255, 196, 0),
+                  color: Colors.white,
                   fontFamily: "Glacial",
                   fontSize: 35,
                   fontWeight: FontWeight.bold),
             )
           ],
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text(
-              "Attempt 1",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: "Glacial",
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold),
-            )
-          ],
-        ),
         SizedBox(
           height: 10,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: const [
-            Icon(
-              Icons.play_circle,
-              color: Colors.white,
-              size: 120,
-            )
-          ],
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width - 150,
-              height: 50,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  color: AppColor.details,
-                  borderRadius: BorderRadius.circular(30)),
-              child: Text(
-                "Song: Castle of Glass",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 17,
-                    fontFamily: 'Glacial',
-                    fontWeight: FontWeight.w500),
-              ),
-            )
-          ],
-        ),
-        Row(
-          children: [
-            Expanded(
+        Expanded(
+            child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(50),
+                        topRight: Radius.circular(50)),
+                    color: Color.fromARGB(255, 53, 53, 53)),
                 child: Column(
-              children: [
-                Divider(
-                  height: 10,
-                  thickness: 5,
-                  color: AppColor.details,
-                )
-              ],
-            ))
-          ],
-        )
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(
+                            Icons.play_circle_filled_sharp,
+                            color: Colors.white,
+                            size: 100,
+                          )
+                        ],
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        width: MediaQuery.of(context).size.width - 50,
+                        child: ProgressBar(
+                          progressBarColor: AppColor.details,
+                          baseBarColor: AppColor.details.withOpacity(0.5),
+                          thumbColor: AppColor.details,
+                          progress: Duration(seconds: 0),
+                          buffered: Duration(seconds: 2),
+                          total: Duration(seconds: 5),
+                          timeLabelTextStyle: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600),
+                          onSeek: (duration) {
+                            print('User selected a new time: $duration');
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width - 150,
+                            height: 60,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(30)),
+                            child: Text(
+                              "Song: Castle of Glass",
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 0, 0, 0),
+                                  fontSize: 17,
+                                  fontFamily: 'Glacial',
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          )
+                        ],
+                      ),
+                    ])))
       ]),
     );
   }
