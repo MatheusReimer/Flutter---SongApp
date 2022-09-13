@@ -80,30 +80,35 @@ class SpotifyApiServices {
   }
 
   Future<String> getUserToken() async {
-    var token = await storage.read(key: 'token');
-    return token.toString();
+    try {
+      var token = await storage.read(key: 'token');
+      return token.toString();
+    } catch (e) {
+      return "no tokens found";
+    }
   }
 
   Future<AccessToken> refreshToken() async {
     var refreshedToken = await storage.read(key: 'refreshToken');
-    try {
-      var response = await Dio().post(_url,
-          queryParameters: {
-            "grant_type": "refresh_token",
-            "refresh_token": refreshedToken
-          },
-          options:
-              Options(contentType: Headers.formUrlEncodedContentType, headers: {
-            "Authorization":
-                'Basic ${base64Encode(utf8.encode('$CLIENT_ID:$CLIENT_SECRET'))}'
-          }));
-      AccessToken accessToken = AccessToken.fromJson(response.data);
-      await saveTokens(accessToken);
-      return accessToken;
-    } catch (e) {
-      print(e);
-      rethrow;
-    }
+    var response = await Dio()
+        .post(_url,
+            queryParameters: {
+              "grant_type": "refresh_token",
+              "refresh_token": refreshedToken
+            },
+            options: Options(
+                contentType: Headers.formUrlEncodedContentType,
+                headers: {
+                  "Authorization":
+                      'Basic ${base64Encode(utf8.encode('$CLIENT_ID:$CLIENT_SECRET'))}'
+                }))
+        .catchError((error) {
+      print(error.response);
+      return error.response;
+    });
+    AccessToken accessToken = AccessToken.fromJson(response.data);
+    await saveTokens(accessToken);
+    return accessToken;
   }
 
   saveTokens(AccessToken accessToken) async {

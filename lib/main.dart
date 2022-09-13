@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 //import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:songapp/gameConfig.dart';
 import 'package:songapp/playlists.dart';
+import 'package:songapp/services/api.dart';
 import 'package:songapp/song.dart';
 
 import 'gameMenu.dart';
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Flutter",
       theme: ThemeData(primarySwatch: Colors.pink),
-      home: const Playlists(),
+      home: const HomePage(),
     );
   }
 }

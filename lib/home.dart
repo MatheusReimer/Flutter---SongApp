@@ -1,8 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:songapp/global/colors.dart';
 import 'package:songapp/playlists.dart';
+import 'package:songapp/services/api.dart';
+import 'package:uni_links/uni_links.dart';
+
+import 'models/AcessToken.dart';
+import 'models/Auth.dart';
+
+TokenModel code = TokenModel();
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,7 +20,57 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+handleServices() async {
+  SpotifyApiServices().launchURLAuth();
+}
+
 class _HomePageState extends State<HomePage> {
+  StreamSubscription? _sub;
+  Future<void> initUniLinks() async {
+    // ... check initialLink
+
+    // Attach a listener to the stream
+    _sub = linkStream.listen((String? link) async {
+      if (link != null) {
+        print('listener');
+        var uri = Uri.parse(link);
+        if (uri.queryParameters['code'] != null) {
+          print(uri.queryParameters['code'].toString());
+          code.code = uri.queryParameters['code'];
+          AccessToken tokenObj =
+              await SpotifyApiServices().changeCodeForToken(code);
+          if (!mounted) {
+            return;
+          }
+          Navigator.push(
+            context,
+            MaterialPageRoute<void>(builder: (BuildContext context) {
+              return Playlists();
+            }),
+          );
+        }
+      }
+      // Parse the link and warn the user, if it is not correct
+    }, onError: (err) {
+      // Handle exception by warning the user their action did not succeed
+    });
+
+    // NOTE: Don't forget to call _sub.cancel() in dispose()
+  }
+
+  @override
+  void dispose() {
+    _sub!.cancel();
+    super.dispose();
+  }
+
+  @override
+  initState() {
+    super.initState();
+
+    initUniLinks();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,6 +158,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       IconButton(
                         onPressed: () {
+                          /*
                           Navigator.push(
                             context,
                             MaterialPageRoute<void>(
@@ -106,6 +166,8 @@ class _HomePageState extends State<HomePage> {
                               return Playlists();
                             }),
                           );
+                          */
+                          handleServices();
                         },
                         icon: const Icon(Icons.play_circle),
                         color: AppColor.details,
